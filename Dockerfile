@@ -4,8 +4,11 @@ FROM pytorch/pytorch:2.0.0-cuda11.7-cudnn8-runtime
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       git python3-pip libgl1-mesa-glx libglib2.0-0 \
-      libsm6 libxext6 libxrender-dev libassimp-dev openssh-server && \
+      libsm6 libxext6 libxrender-dev libassimp-dev openssh-server curl && \
     rm -rf /var/lib/apt/lists/*
+
+# Install vast-cli for instance control
+RUN pip install vast-ai-tools
 
 WORKDIR /workspace
 
@@ -47,6 +50,13 @@ GRADIO_PID=$!\n\
 # Monitor both processes\n\
 wait $FASTAPI_PID $GRADIO_PID\n\
 ' > /workspace/start.sh && chmod +x /workspace/start.sh
+
+# Make entrypoint.sh executable
+COPY entrypoint.sh /workspace/
+RUN chmod +x /workspace/entrypoint.sh
+
+# Set the entrypoint to our wrapper script
+ENTRYPOINT ["/workspace/entrypoint.sh"]
 
 # Run both services
 CMD ["/workspace/start.sh"]
