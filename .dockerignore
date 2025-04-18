@@ -1,0 +1,15 @@
+# Ignore Git artifacts
+.git
+.gitignore
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Local data / logs
+data/
+logs/
+
+# Environment files
+.env
